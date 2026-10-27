@@ -111,7 +111,7 @@ footer .ig + .ig { margin-left: -4px; }
 footer .ig { display: inline-flex; color: var(--fg); }
 footer .ig svg { width: 20px; height: 20px; fill: currentColor; transition: opacity .2s; }
 footer .ig:hover svg { opacity: .55; }
-.featured { margin: 56px 0 0; }
+.featured { margin: 8px 0 56px; }
 .featured .logos { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 28px 40px; padding: 28px 0 32px; border-bottom: 1px solid var(--line); }
 .featured .logos a { opacity: .8; transition: opacity .2s; }
 .featured .logos a:hover { opacity: 1; }
@@ -483,28 +483,11 @@ const tile = (w, i) => `
       <span class="name">${esc(w.name)}</span>
       ${Array.isArray(w.v) ? `<span class="count">${w.v.length} videos</span>` : ""}
     </a>`;
-// Homepage: the first 6 projects as Featured, then every other project grouped by category
-const FEATURED_COUNT = 6;
-// Selected projects that should also appear in their category section
-const ALSO_IN_CATEGORY = ["life-in-pink"];
 function home() {
-  const top = W.slice(0, FEATURED_COUNT), rest = W.slice(FEATURED_COUNT);
-  const idx = w => W.indexOf(w);
-  return `
-  <div class="section-label">Selected Work <span>${W.length} projects</span></div>
-  <div class="grid">${top.map(w => tile(w, idx(w))).join("")}</div>
-  ${featured()}
-  ${CATS.map(c => {
-    const list = [...top.filter(w => ALSO_IN_CATEGORY.includes(w.slug)), ...rest].filter(w => w.cat === c);
-    return list.length ? `<section class="cat" id="cat-${c.toLowerCase().replace(/[^a-z]+/g, "-")}">
-    <div class="section-label">${esc(c)} <span>${list.length}</span></div>
-    <div class="grid">${list.map(w => tile(w, idx(w))).join("")}</div>
-  </section>` : "";
-  }).join("")}`;
+  return `${featured()}
+  <div class="section-label">Work <span>${W.length} projects</span></div>
+  <div class="grid">${W.map(tile).join("")}</div>`;
 }
-
-// Crew credits per project (each sourced from the video description, label release or press)
-const CREW = {"lonely-road": [["Director", "Sam Cahill"]], "fix-ur-face": [["Director", "Sam Cahill"], ["Mural Artist", "Lugosis, Strato"], ["Character & Jacket Design", "Slawn Olaolu"]], "vampire-diaries": [["Director", "Sam Cahill"], ["Choreographer", "Sean Bankhead"]], "cliche": [["Director", "Sam Cahill"], ["Choreographer", "Sean Bankhead"]], "miss-sunshine": [["Director", "Sam Cahill"]], "crash-first": [["Director", "Sam Cahill"], ["Director of Photography", "Sam Cahill"], ["Production Company", "Floor 13"], ["Camera Operators", "Project Freefall"]], "iris": [["Director", "Sam Cahill"]], "lost-boys": [["Director", "Sam Cahill"]], "don-t-let-me-go": [["Director", "Sam Cahill"]], "girl-next-door": [["Director", "Sam Cahill, Gianni Paolo"]], "your-name-forever": [["Director", "Sam Cahill"]], "el-pistolero": [["Director", "Sam Cahill"]], "everything-tatted": [["Director", "Sam Cahill"]], "life-in-pink": [["Director", "Sam Cahill"], ["Producer", "Sam Cahill"], ["Executive Producer", "Colson Baker, Stephen Astephen, Andre Cisco, Ashleigh Veverka, John Janick"]], "mgk-mainstream-sellout-live-from-cleveland": [["Director", "Sam Cahill, Andrew Sandler"], ["Director of Photography", "Sam Cahill"], ["Editor", "Sam Cahill, Colson Baker, Adam Taylor"], ["Producer", "Andrew Sandler, Barry Ehrmann"], ["Distributor", "Trafalgar Releasing"]], "outlaw-overture": [["Director", "Hunter Simmons, Sam Cahill"]], "tell-me-what-s-up": [["Director", "Sam Cahill"]], "starman": [["Director", "Sam Cahill"]], "goddamn": [["Director", "Sam Cahill"]], "passport": [["Director", "Sam Cahill, Daniel Kelly"], ["Production Company", "Floor 13"]], "mph": [["Director", "Sam Cahill"]], "jjk": [["Director", "Sam Cahill"]], "pressure": [["Director", "Sam Cahill"], ["Shot by", "Sam Cahill"]], "mgk-the-cypher-and-cover-songs": [["Director", "Sam Cahill"], ["Shot by", "Sam Cahill"]], "mod-sun-stay-away": [["Shot by", "Sam Cahill"], ["Editor", "Sam Cahill"]], "9-lives": [["Director", "Sam Cahill"]], "daywalker": [["Director", "Colson Baker (Machine Gun Kelly), Sam Cahill"]], "bullets-with-names": [["Director", "Sam Cahill"]], "bloody-valentine-acoustic": [["Director", "Sam Cahill"], ["Camera Operator", "Sam Cahill"], ["Editor", "Sam Cahill"]], "mod-sun-hotel-lights": [["Director", "Sam Cahill"], ["Shot by", "Sam Cahill"], ["Editor", "Sam Cahill"], ["Creative Director", "iblowurmind"], ["Colorist", "zwickpost"]], "mod-sun-and-avril-lavigne-flames": [["Director", "Sam Cahill"]], "jay-critch-takeout": [["Shot by", "Sam Cahill"]]};
 
 // Blurbs, accolades and press links per project (keyed by slug); every item is sourced
 const PRESS = {
