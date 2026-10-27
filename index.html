@@ -187,6 +187,13 @@ footer .wrap { padding-block: 28px; font-size: 12px; color: var(--muted); border
 .bg-reel .full:hover { background: #fff; color: #111; }
 .bg-reel .full svg { width: 12px; height: 12px; fill: currentColor; }
 .bg-reel .live { position: absolute; z-index: 2; right: max(16px, env(safe-area-inset-right, 0px)); top: 50%; transform: translateY(-50%) rotate(90deg); transform-origin: right center; font-family: var(--mono); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; opacity: .55; }
+/* Title screen: everything set in VCR OSD Mono to match the name */
+.is-home header .logo, .is-home header nav a, .bg-reel .roles, .bg-reel .full, .bg-reel .live, .vf-hud { font-family: var(--vcr); font-weight: 400; }
+.is-home header .logo { font-size: 22px; letter-spacing: .02em; text-transform: uppercase; }
+.is-home header nav a { font-size: 14px; letter-spacing: .08em; }
+.bg-reel .roles { font-size: 15px; letter-spacing: .08em; }
+.bg-reel .full { font-size: 14px; letter-spacing: .06em; }
+.vf-hud { font-size: 13px; letter-spacing: .04em; }
 @media (prefers-reduced-motion: reduce) { .bg-reel .footage { animation: none; } }
 
 /* about */
