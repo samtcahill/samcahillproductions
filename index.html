@@ -113,6 +113,12 @@ footer .ig:hover svg { opacity: .55; }
 .featured .lg { font-size: 22px; }
 .featured .lg-nme { font-size: 18px; } .featured .lg-wide { font-size: 13px; }
 @media (max-width: 760px) { .featured .logos { justify-content: flex-start; gap: 22px 28px; } .featured .lg { font-size: 18px; } }
+/* Hover preview: a muted YouTube clip fades in over the thumbnail */
+.tile .prev { position: absolute; inset: 0; overflow: hidden; pointer-events: none; opacity: 0; transition: opacity .5s; z-index: 1; }
+.tile .prev iframe { position: absolute; left: 50%; top: 50%; width: 140%; height: 140%; transform: translate(-50%, -50%); border: 0; }
+.tile .prev.on { opacity: 1; }
+.tile .name { z-index: 2; }
+.tile.previewing .name { place-items: end start; background: linear-gradient(0deg, rgba(0,0,0,.6), transparent 45%); text-align: left; font-size: 13px; }
 /* Press wall: outlet wordmarks + pull quotes scattered across the page in mixed sizes and faces */
 .wall { max-width: 1200px; margin-top: 56px; }
 .wall > .label { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); letter-spacing: .14em; text-transform: uppercase; padding-bottom: 10px; border-bottom: 1px solid var(--fg); }
@@ -434,7 +440,7 @@ function home() {
   return `${featured()}
   <div class="section-label">Work <span>${W.length} projects</span></div>
   <div class="grid">${W.map((w, i) => `
-    <a class="tile" href="#${w.slug}">
+    <a class="tile" href="#${w.slug}"${ytId(first(w)) ? ` data-prev="${ytId(first(w))}"` : ""}>
       <span class="frame"><span class="shade" style="background:${shade(i)}"></span>${thumb(first(w))}</span>
       <span class="name">${esc(w.name)}</span>
       ${Array.isArray(w.v) ? `<span class="count">${w.v.length} videos</span>` : ""}
@@ -698,6 +704,30 @@ function playIntro() {
     setTimeout(finish, 3050)
   ];
 }
+
+// Hover previews: after a short hover, play the tile's video muted from 30s in
+(function hoverPreviews() {
+  if (!matchMedia("(hover: hover) and (pointer: fine)").matches || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  let timer, live;
+  const stop = () => { clearTimeout(timer); if (live) { live.tile.classList.remove("previewing"); live.box.remove(); live = null; } };
+  view.addEventListener("mouseover", e => {
+    const tile = e.target.closest(".tile[data-prev]");
+    if (!tile || (live && live.tile === tile)) return;
+    stop();
+    timer = setTimeout(() => {
+      const id = tile.dataset.prev, box = document.createElement("span");
+      box.className = "prev";
+      box.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&mute=1&controls=0&playsinline=1&loop=1&playlist=${id}&start=30&rel=0&disablekb=1&iv_load_policy=3&modestbranding=1" allow="autoplay; encrypted-media" tabindex="-1" title=""></iframe>`;
+      box.querySelector("iframe").addEventListener("load", () => setTimeout(() => box.classList.add("on"), 900));
+      tile.querySelector(".frame").append(box);
+      tile.classList.add("previewing");
+      live = { tile, box };
+    }, 250);
+  });
+  view.addEventListener("mouseout", e => { const t = e.target.closest(".tile"); if (t && !t.contains(e.relatedTarget)) stop(); });
+  window.addEventListener("hashchange", stop);
+})();
+
 document.getElementById("vf-skip").addEventListener("click", finish);
 let seen = false;
 try { seen = sessionStorage.getItem("introSeen") === "1"; sessionStorage.setItem("introSeen", "1"); } catch (e) {}
