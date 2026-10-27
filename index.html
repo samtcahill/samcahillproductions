@@ -639,10 +639,13 @@ document.addEventListener("submit", async e => {
   try {
     const r = await fetch(FORM_ENDPOINT, { method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify(data) });
     const j = await r.json().catch(() => ({}));
-    if (!r.ok || j.success === "false" || j.success === false) throw new Error(j.message || r.status);
+    if (!r.ok || j.success === "false" || j.success === false) throw new Error(j.message || `HTTP ${r.status}`);
     f.reset(); st.textContent = "Thanks, your request was sent. Sam will be in touch.";
   } catch (err) {
-    st.textContent = "Something went wrong. Please email sam@bottomcard.com directly.";
+    // FormSubmit explains problems (e.g. the one-time activation) in its message, so show it
+    st.textContent = /activat/i.test(err.message) ? "This form is being activated. Please try again shortly, or email sam@bottomcard.com directly."
+      : `Something went wrong (${err.message}). Please email sam@bottomcard.com directly.`;
+    console.warn("Booking form:", err.message);
   } finally { btn.disabled = false; }
 });
 
