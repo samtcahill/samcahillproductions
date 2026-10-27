@@ -137,7 +137,6 @@ footer .ig:hover svg { opacity: .55; }
 .book button:disabled { opacity: .5; cursor: wait; }
 .book .status { margin: 0; font-size: 14px; color: #3b3b39; min-height: 1.4em; }
 @media (max-width: 760px) { .contact { grid-template-columns: minmax(0, 1fr); } .book .row { grid-template-columns: minmax(0, 1fr); } }
-.cat { margin-top: 56px; }
 .crew { max-width: 1200px; margin: 32px 0 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px 32px; padding-top: 12px; border-top: 1px solid var(--line); }
 .crew .h { grid-column: 1 / -1; font-size: 11px; color: var(--muted); letter-spacing: .14em; text-transform: uppercase; }
 .crew div { display: grid; gap: 2px; }
@@ -150,6 +149,11 @@ footer .ig:hover svg { opacity: .55; }
 .legal p { color: #2f2f2d; margin: 0 0 12px; }
 .legal a, .book .fine a, footer .wrap > span a { border-bottom: 1px solid var(--line); }
 .book .fine { margin: 0; font-size: 12px; color: var(--muted); }
+.cat { margin-top: 48px; scroll-margin-top: 24px; }
+.cat-jump { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: -6px 0 8px; }
+.cat-jump button { font: inherit; font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); background: none; border: 0; border-bottom: 1px solid transparent; padding: 4px 0; cursor: pointer; }
+.cat-jump button span { font-family: var(--mono); font-weight: 400; letter-spacing: 0; font-size: 11px; }
+.cat-jump button:hover { color: var(--fg); border-color: var(--fg); }
 /* Press wall: outlet wordmarks + pull quotes scattered across the page in mixed sizes and faces */
 .wall { max-width: 1200px; margin-top: 56px; }
 .wall > .label { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); letter-spacing: .14em; text-transform: uppercase; padding-bottom: 10px; border-bottom: 1px solid var(--fg); }
@@ -365,7 +369,7 @@ body.snapped .top { animation: settle .6s cubic-bezier(.2,.8,.2,1); }
 </div>
 <header>
   <div class="wrap">
-    <a class="logo" href="#work">Sam Cahill.</a>
+    <a class="logo" href="#">Sam Cahill.</a>
     <nav aria-label="Main">
       <a href="#work" id="nav-work">Work</a>
       <a href="#about" id="nav-about">About</a>
@@ -399,10 +403,12 @@ const W = [
   ["Bullets with Names","LfRddMPPbxo"],["Bloody Valentine Acoustic","vHiFxhPs2TQ"],["Mod Sun Hotel Lights","dOns1zThUqU"],
   ["Mod Sun & Avril Lavigne Flames","SxRX_bU8jZk"],["Jay Critch Takeout","QhR9SXY6MAU"],["Girlfriends · The Neighbourhood","WoN_9SySJeo"],
   ["Sonic Burgers Commercial","short:mp2ExK2tjsk"],["Genre: Sadboy (Documentary)","hVKUBDKCuaU"],
-  ["jxdn x For Those Who Sin","ig:https://www.instagram.com/reel/CZ2inCOpFfe/"]
+  ["jxdn x For Those Who Sin","ig:https://www.instagram.com/reel/CZ2inCOpFfe/"],
+  ["Lost Americana Fragrance","_4ftWf4iHNk"]
 ].map(([t, v]) => ({ t, v, slug: t.toLowerCase().replace(/&/g,"and").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"") }));
 // Titles exactly as posted on YouTube, keyed by slug (slugs keep the short names so page links never change)
 const YT_TITLES = {
+  "lost-americana-fragrance": "mgk drops his first genderless fragrance: \"lost americana\" | Dossier",
   "lonely-road": "mgk & Jelly Roll - Lonely Road (Official Music Video)",
   "fix-ur-face": "mgk - FIX UR FACE (feat. Fred Durst) (Official Music Video)",
   "vampire-diaries": "mgk - vampire diaries",
@@ -443,7 +449,7 @@ const YT_TITLES = {
   };
 W.forEach(w => w.name = YT_TITLES[w.slug] || w.t);
 // Sam's picks lead the grid, in this order
-const TOP = ["life-in-pink", "cliche", "lonely-road", "vampire-diaries", "fix-ur-face", "girl-next-door", "everything-tatted", "jjk", "mod-sun-hotel-lights"];
+const TOP = ["life-in-pink", "cliche", "lonely-road", "vampire-diaries", "fix-ur-face", "girl-next-door", "everything-tatted", "jjk", "mod-sun-hotel-lights", "lost-americana-fragrance"];
 W.sort((a, b) => (TOP.indexOf(a.slug) + 1 || 99) - (TOP.indexOf(b.slug) + 1 || 99));
 
 const url = v => v.startsWith("ig:") ? v.slice(3) : v.startsWith("short:") ? "https://youtube.com/shorts/" + v.slice(6) : "https://youtu.be/" + v;
@@ -469,7 +475,7 @@ function featured() {
 
 // Category for each project (default: Music Videos)
 const CATEGORY = {
-  "sonic-burgers-commercial": "Commercial",
+  "sonic-burgers-commercial": "Commercial", "lost-americana-fragrance": "Commercial",
   "life-in-pink": "Documentary", "genre-sadboy-documentary": "Documentary", "mgk-mainstream-sellout-live-from-cleveland": "Documentary",
   "jxdn-x-for-those-who-sin": "Fashion",
   "jimmy-kimmel-2021": "Live & Sessions", "mgk-the-cypher-and-cover-songs": "Live & Sessions", "iris": "Live & Sessions",
@@ -482,6 +488,23 @@ const tile = (w, i) => `
       <span class="name">${esc(w.name)}</span>
       ${Array.isArray(w.v) ? `<span class="count">${w.v.length} videos</span>` : ""}
     </a>`;
+// Work tab: every project grouped by category, with jump links at the top
+const catId = c => "cat-" + c.toLowerCase().replace(/[^a-z]+/g, "-");
+function work() {
+  const groups = CATS.map(c => [c, W.filter(w => w.cat === c)]).filter(([, l]) => l.length);
+  return `
+  <div class="section-label">Work <span>${W.length} projects</span></div>
+  <nav class="cat-jump" aria-label="Categories">${groups.map(([c, l]) => `<button type="button" data-jump="${catId(c)}">${esc(c)} <span>${l.length}</span></button>`).join("")}</nav>
+  ${groups.map(([c, l]) => `<section class="cat" id="${catId(c)}">
+    <div class="section-label">${esc(c)} <span>${l.length}</span></div>
+    <div class="grid">${l.map(w => tile(w, W.indexOf(w))).join("")}</div>
+  </section>`).join("")}`;
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-jump]");
+  if (b) document.getElementById(b.dataset.jump)?.scrollIntoView({ behavior: "smooth", block: "start" });
+});
+
 function home() {
   return `${featured()}
   <div class="section-label">Work <span>${W.length} projects</span></div>
@@ -763,15 +786,15 @@ const PATH_SLUG = (location.pathname.match(/^\/work\/([^/]+)\/?$/) || [])[1];
 function route() {
   const h = location.hash.slice(1) || PATH_SLUG || "";
   const i = W.findIndex(w => w.slug === h);
-  const page = ["contact", "gear", "about", "privacy"].includes(h) ? h : null;
-  view.innerHTML = page === "privacy" ? privacy() : page === "contact" ? contact() : page === "gear" ? gear() : page === "about" ? about() : i >= 0 ? project(i) : home();
+  const page = ["work", "contact", "gear", "about", "privacy"].includes(h) ? h : null;
+  view.innerHTML = page === "work" ? work() : page === "privacy" ? privacy() : page === "contact" ? contact() : page === "gear" ? gear() : page === "about" ? about() : i >= 0 ? project(i) : home();
   document.title = i >= 0 ? `${W[i].name} | Sam Cahill` : page ? `${page[0].toUpperCase() + page.slice(1)} | Sam Cahill` : "Sam Cahill | Director, DoP, Editor & Photographer | Los Angeles";
   document.getElementById("nav-about").toggleAttribute("aria-current", h === "about");
   document.body.classList.toggle("is-home", !page && i < 0);
-  document.getElementById("nav-work").toggleAttribute("aria-current", !page);
+  document.getElementById("nav-work").toggleAttribute("aria-current", h === "work" || i >= 0);
   document.getElementById("nav-gear").toggleAttribute("aria-current", h === "gear");
   document.getElementById("nav-contact").toggleAttribute("aria-current", h === "contact");
-  if (h && h !== "work") window.scrollTo(0, 0);
+  if (h) window.scrollTo(0, 0);
 }
 const embed = id => `<iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&modestbranding=1" title="Video player" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:0"></iframe>`;
 view.addEventListener("click", e => {
