@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://i.ytimg.com; frame-src https://www.youtube-nocookie.com https://player.vimeo.com; media-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://i.ytimg.com https://strapped.la; frame-src https://www.youtube-nocookie.com https://player.vimeo.com; media-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="description" content="Sam Cahill: director, DoP, editor and photographer based in Los Angeles. Music videos, commercials and documentaries.">
 <meta property="og:title" content="Sam Cahill Productions">
@@ -15,7 +15,7 @@
 <style>html,body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>Sam Cahill Productions</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo+Black&family=Archivo:wght@400;500;600;700&family=Bebas+Neue&family=IBM+Plex+Mono:wght@400&family=Instrument+Serif:ital@0;1&family=Playfair+Display:ital,wght@1,700;1,900&display=swap">
 <style>
 /* Layout: gallery-white portfolio in the Brian Beckwith mold. Small logo left, two-word nav right, reel first, then an edge-to-edge grid of project tiles; each tile opens a project page with prev/next. */
 :root {
@@ -79,7 +79,7 @@ nav a:hover, nav a[aria-current="page"] { border-color: var(--fg); }
 .project h4 { font-size: 22px; font-weight: 600; letter-spacing: .02em; text-transform: uppercase; margin: 0 0 20px; }
 .project .frame { max-width: 1200px; }
 .project .credit { margin: -12px 0 20px; font-size: 13px; color: var(--muted); letter-spacing: .12em; text-transform: uppercase; }
-.notes { max-width: 1200px; margin-top: 32px; display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 16px 48px; align-items: start; }
+.notes { max-width: 1200px; margin-top: 32px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px 48px; align-items: start; }
 .notes .blurb { grid-column: 1; margin: 0; font-size: 19px; line-height: 1.5; max-width: 52ch; text-wrap: pretty; }
 .notes .accolades { grid-column: 1; list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
 .notes .accolades li { font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; border: 1px solid var(--fg); padding: 6px 10px; }
@@ -90,6 +90,50 @@ nav a:hover, nav a[aria-current="page"] { border-color: var(--fg); }
 .notes .press li a:hover span { text-decoration: underline; }
 .notes .press b { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; }
 .notes .press span { font-size: 15px; }
+.strapped { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 24px; align-items: center; margin-top: 40px; padding: 20px; border: 1px solid var(--fg); }
+.strapped .pic { aspect-ratio: 1; background: #f3f3f1; overflow: hidden; display: grid; place-items: center; }
+.strapped img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s ease; }
+.strapped:hover img { transform: scale(1.04); }
+.strapped .txt { display: flex; flex-direction: column; gap: 6px; }
+.strapped small { font-size: 11px; color: var(--muted); letter-spacing: .14em; text-transform: uppercase; }
+.strapped b { font-family: var(--vcr); font-weight: 400; font-size: 24px; text-transform: uppercase; }
+.strapped .txt > span { font-size: 14px; color: #3a3a38; max-width: 46ch; }
+.strapped em { font-style: normal; font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; margin-top: 6px; }
+.strapped:hover em { text-decoration: underline; }
+@media (max-width: 560px) { .strapped { grid-template-columns: minmax(0, 1fr); } }
+/* Press wall: outlet wordmarks + pull quotes scattered across the page in mixed sizes and faces */
+.wall { max-width: 1200px; margin-top: 56px; }
+.wall > .label { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); letter-spacing: .14em; text-transform: uppercase; padding-bottom: 10px; border-bottom: 1px solid var(--fg); }
+.wall .lead { display: block; padding: 48px 0 40px; border-bottom: 1px solid var(--line); }
+.wall .lead q { display: block; font-family: "Instrument Serif", Georgia, serif; font-style: italic; font-size: clamp(30px, 4.6vw, 60px); line-height: 1.08; letter-spacing: -.01em; max-width: 22ch; text-wrap: balance; }
+.wall .lead .by { margin-top: 22px; }
+.wall .cols { columns: 3 280px; column-gap: 48px; padding-top: 36px; }
+.clip { display: block; break-inside: avoid; margin: 0 0 44px; }
+.clip q { display: block; margin: 12px 0 10px; quotes: "\201C" "\201D"; text-wrap: pretty; }
+.clip .hl { display: block; font-size: 12px; color: var(--muted); line-height: 1.4; }
+.clip:hover .hl { color: var(--fg); text-decoration: underline; }
+.clip.f0 q { font-family: "Instrument Serif", Georgia, serif; font-size: 30px; line-height: 1.12; }
+.clip.f1 q { font-family: var(--sans); font-weight: 600; font-size: 19px; line-height: 1.35; letter-spacing: -.01em; }
+.clip.f2 q { font-family: var(--mono); font-size: 14px; line-height: 1.55; }
+.clip.f3 q { font-family: "Playfair Display", Georgia, serif; font-style: italic; font-weight: 700; font-size: 24px; line-height: 1.2; }
+.clip.f4 q { font-family: "Bebas Neue", Impact, sans-serif; font-size: 36px; line-height: 1; letter-spacing: .01em; }
+.clip.f5 q { font-family: var(--vcr); font-size: 17px; line-height: 1.4; text-transform: uppercase; }
+.clip.r { text-align: right; } .clip.i { padding-left: 14%; }
+.lg { display: inline-flex; align-items: center; color: var(--fg); line-height: 1; white-space: nowrap; }
+.lg svg { height: .95em; width: auto; fill: currentColor; }
+.lg-rs { font-family: "Playfair Display", Georgia, serif; font-style: italic; font-weight: 900; font-size: 26px; letter-spacing: -.02em; }
+.lg-bb { font-size: 26px; }
+.lg-nme { font-family: Anton, Impact, sans-serif; font-size: 22px; background: #e2001a; color: #fff; padding: 4px 8px 3px; letter-spacing: .02em; }
+.lg-cx { font-family: "Archivo Black", sans-serif; font-size: 22px; letter-spacing: -.03em; text-transform: uppercase; }
+.lg-kr { font-family: Anton, Impact, sans-serif; font-size: 26px; text-transform: uppercase; transform: skew(-8deg); letter-spacing: .01em; }
+.lg-ux { font-family: "Archivo Black", sans-serif; font-style: italic; font-size: 20px; text-transform: uppercase; }
+.lg-bebas { font-family: "Bebas Neue", Impact, sans-serif; font-size: 28px; letter-spacing: .12em; }
+.lg-anton { font-family: Anton, Impact, sans-serif; font-size: 26px; text-transform: uppercase; letter-spacing: .02em; }
+.lg-serif { font-family: "Instrument Serif", Georgia, serif; font-size: 28px; }
+.lg-black { font-family: "Archivo Black", sans-serif; font-size: 20px; text-transform: uppercase; letter-spacing: .02em; }
+.lg-wide { font-family: var(--sans); font-weight: 700; font-size: 14px; letter-spacing: .28em; text-transform: uppercase; }
+.lead .lg { font-size: 34px; }
+@media (max-width: 760px) { .wall .cols { columns: 1; } .clip.i { padding-left: 0; } .clip.r { text-align: left; } }
 @media (max-width: 760px) { .notes { grid-template-columns: minmax(0, 1fr); } .notes .press { grid-column: 1; grid-row: auto; } }
 .project .watch { display: inline-flex; gap: 8px; margin-top: 16px; font-size: 13px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; border-bottom: 1px solid var(--fg); padding-bottom: 2px; }
 .parts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
@@ -367,12 +411,33 @@ const PRESS = {
   "genre-sadboy-documentary": {"artist": "mgk x Trippie Redd", "blurb": "A 16-minute documentary on the making of genre : sadboy, mgk and Trippie Redd's collaborative EP. It follows the pair in the studio and with friends.", "press": [{"outlet": "REVOLT", "headline": "mgk and Trippie Redd are 'lost boys' on new single", "url": "https://www.revolt.tv/article/mgk-and-trippie-redd-are-lost-boys-on-new-single"}]},
   "jxdn-x-for-those-who-sin": {"artist": "jxdn / For Those Who Sin", "blurb": ""}
 };
+const BILLBOARD = `<svg viewBox="0 9.4 24 5.2" aria-hidden="true"><path d="M3.69685 11.02465h1.12413v3.41864H3.69685Zm1.35662-1.33669h1.12381v4.75533H5.05347Zm1.35641 0H7.5337v4.75533H6.40988Zm13.22037 1.68925v-.35256h-1.12397v3.41864h1.12397v-1.6293c0-.41916.21904-.64528.61843-.64528h.133v-1.17728c-.33918.01334-.58533.11975-.75143.38579zM4.2588 9.50287c-.35974 0-.65171.29187-.65171.65182 0 .35994.29197.65192.6517.65192.36006 0 .65182-.29198.65182-.65192 0-.35995-.29176-.65182-.65181-.65182zm12.89058 1.78207c-.15798-.17233-.52558-.31455-.80468-.31455-.84888 0-1.45782.55964-1.6069 1.39153-.1625-.79809-.8581-1.41215-1.70633-1.41215-.85636 0-1.55753.62123-1.71082 1.4343-.1488-.84507-.81354-1.40519-1.6379-1.40519-.30589 0-.55874.06655-.7783.21936v-1.5097H7.78063v4.75528h1.10409v-.3127c.26603.24615.55194.3592.90456.3592.75922 0 1.39843-.59433 1.53517-1.41357.1611.80168.85261 1.4111 1.70707 1.4111.84713 0 1.52653-.5965 1.69943-1.37761.14296.8532.81898 1.38689 1.62698 1.38689.2791 0 .58527-.0934.79145-.24615v.19284h1.12381v-1.49616a8.92817 8.92817 0 0 0-.0016-.1796 8.7632 8.7632 0 0 0 .0016-.17955v-1.55806H17.1494zm-7.58627 2.11732c-.35995 0-.6517-.29187-.6517-.65192 0-.35984.29175-.65165.6517-.65165.35984 0 .6517.29181.6517.65165.00006.36005-.2918.65192-.6517.65192zm3.46836-.0522c-.35973 0-.65181-.29208-.65181-.65192 0-.35978.29208-.65165.65181-.65165.35984 0 .6517.29187.6517.65165.00006.35979-.2917.65192-.6517.65192zm3.3773.02067c-.35995 0-.65145-.29208-.65145-.65192 0-.35978.29145-.65165.65145-.65165.36026 0 .6517.29187.6517.65165.00006.35984-.29144.65192-.6517.65192zm6.46693-3.6833v1.50976c-.21915-.15292-.4719-.21936-.77816-.21936-.93767 0-1.66916.72485-1.66916 1.76914 0 .98418.70492 1.7424 1.56307 1.7424.35224 0 .6382-.11315.90445-.35915v.3126H24V9.68743Zm-.66194 3.7064c-.35947 0-.65144-.29208-.65144-.65166 0-.36005.29187-.65202.65144-.65202.36005 0 .65192.29197.65192.65202 0 .35958-.29187.65166-.65192.65166zm-20.31164-2.415c-.306 0-.55864.06655-.77832.21936V9.68854H0v4.75528h1.10399v-.3127c.26603.24615.55204.3592.90466.3592.85783 0 1.5628-.75843 1.5628-1.74261 0-1.04393-.7316-1.76888-1.66932-1.76888zm-.11965 2.42343c-.35984 0-.6517-.29187-.6517-.65192 0-.35984.29186-.65165.6517-.65165.35995 0 .65171.29181.65171.65165 0 .36005-.29176.65192-.6517.65192z"/></svg>`;
+// Outlet wordmarks, set in a face close to each masthead (no logo files to load)
+const LOGOS = [
+  [/rolling stone/i, "lg-rs"], [/billboard/i, "lg-bb", BILLBOARD], [/^nme/i, "lg-nme", "NME"], [/complex/i, "lg-cx"],
+  [/kerrang/i, "lg-kr"], [/uproxx/i, "lg-ux"], [/revolt|alternative press|loudwire|consequence|xxl|tmz|people|hypebeast|stereogum/i, null],
+];
+const FACES = ["lg-bebas", "lg-anton", "lg-serif", "lg-black", "lg-wide"];
+function logo(name) {
+  const hit = LOGOS.find(([re]) => re.test(name));
+  if (hit && hit[1]) return `<span class="lg ${hit[1]}" aria-label="${esc(name)}">${hit[2] || esc(name)}</span>`;
+  const n = [...name].reduce((h, c) => h + c.charCodeAt(0), 0);
+  return `<span class="lg ${FACES[n % FACES.length]}">${esc(name)}</span>`;
+}
 function notes(x) {
+  const press = x.press || [], quoted = press.filter(q => q.quote);
+  const lead = quoted[0], rest = press.filter(q => q !== lead);
+  const clip = (q, k) => `<a class="clip f${(k * 5 + 1) % 6}${k % 3 == 1 ? " i" : k % 4 == 3 ? " r" : ""}" href="${q.url}" target="_blank" rel="noopener">
+        ${logo(q.outlet)}${q.quote ? `<q>${esc(q.quote)}</q>` : ""}<span class="hl">${esc(q.headline)} ↗</span></a>`;
   return `<section class="notes">
     ${x.blurb ? `<p class="blurb">${esc(x.blurb)}</p>` : ""}
     ${x.accolades && x.accolades.length ? `<ul class="accolades">${x.accolades.map(a => `<li>${a.url ? `<a href="${a.url}" target="_blank" rel="noopener">${esc(a.text)}</a>` : esc(a.text)}</li>`).join("")}</ul>` : ""}
-    ${x.press && x.press.length ? `<div class="press"><span class="label">Press</span><ul>${x.press.map(q => `<li><a href="${q.url}" target="_blank" rel="noopener"><b>${esc(q.outlet)}</b><span>${esc(q.headline)}</span></a></li>`).join("")}</ul></div>` : ""}
-  </section>`;
+  </section>
+  ${press.length ? `<section class="wall">
+    <div class="label"><span>Press</span><span>${press.length} ${press.length > 1 ? "write-ups" : "write-up"}</span></div>
+    ${lead ? `<a class="lead clip" href="${lead.url}" target="_blank" rel="noopener">${logo(lead.outlet)}<q>${esc(lead.quote)}</q><span class="hl by">${esc(lead.headline)} ↗</span></a>` : ""}
+    ${rest.length ? `<div class="cols">${rest.map(clip).join("")}</div>` : ""}
+  </section>` : ""}`;
 }
 
 function project(i) {
@@ -493,6 +558,15 @@ function about() {
         <dt>Studied</dt><dd>Film Studies, University of Colorado</dd>
         <dt>Based</dt><dd>Seattle, WA · Los Angeles, CA</dd>
       </dl>
+      <a class="strapped" href="https://strapped.la" target="_blank" rel="noopener">
+        <span class="pic"><img src="https://strapped.la/cdn/shop/files/eb3a07ba-ed79-4519-8b8c-193c95e720fa.png?v=1767054220&amp;width=900" alt="The Strap of Spades camera strap by STRAPPED" loading="lazy" onerror="this.remove()"></span>
+        <span class="txt">
+          <small>Strapped</small>
+          <b>The Strap of Spades</b>
+          <span>Handcrafted black leather and a stainless steel chain, built for directors, photographers and creators. Carries camera rigs up to 8 lbs.</span>
+          <em>Shop strapped.la ↗</em>
+        </span>
+      </a>
     </div>
   </section>`;
 }
