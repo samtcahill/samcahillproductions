@@ -485,6 +485,8 @@ const tile = (w, i) => `
     </a>`;
 // Homepage: the first 6 projects as Featured, then every other project grouped by category
 const FEATURED_COUNT = 6;
+// Selected projects that should also appear in their category section
+const ALSO_IN_CATEGORY = ["life-in-pink"];
 function home() {
   const top = W.slice(0, FEATURED_COUNT), rest = W.slice(FEATURED_COUNT);
   const idx = w => W.indexOf(w);
@@ -493,7 +495,7 @@ function home() {
   <div class="grid">${top.map(w => tile(w, idx(w))).join("")}</div>
   ${featured()}
   ${CATS.map(c => {
-    const list = rest.filter(w => w.cat === c);
+    const list = [...top.filter(w => ALSO_IN_CATEGORY.includes(w.slug)), ...rest].filter(w => w.cat === c);
     return list.length ? `<section class="cat" id="cat-${c.toLowerCase().replace(/[^a-z]+/g, "-")}">
     <div class="section-label">${esc(c)} <span>${list.length}</span></div>
     <div class="grid">${list.map(w => tile(w, idx(w))).join("")}</div>
