@@ -877,14 +877,14 @@ document.addEventListener("click", e => {
   location.hash = a.getAttribute("href").split("/")[1];
 });
 
-// Hover previews: after a short hover, play the tile's video muted from 30s in
-(function hoverPreviews() {
-  if (!matchMedia("(hover: hover) and (pointer: fine)").matches || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+// Video previews: play the tile's video muted from 30s in. Desktop starts one on
+// a short hover; touch screens play whichever tile sits mid-screen while scrolling.
+(function previews() {
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   let timer, live;
   const stop = () => { clearTimeout(timer); if (live) { live.tile.classList.remove("previewing"); live.box.remove(); live = null; } };
-  view.addEventListener("mouseover", e => {
-    const tile = e.target.closest(".tile[data-prev]");
-    if (!tile || (live && live.tile === tile)) return;
+  const start = (tile, delay) => {
+    if (live && live.tile === tile) return;
     stop();
     timer = setTimeout(() => {
       const id = tile.dataset.prev, box = document.createElement("span");
@@ -894,10 +894,35 @@ document.addEventListener("click", e => {
       tile.querySelector(".frame").append(box);
       tile.classList.add("previewing");
       live = { tile, box };
-    }, 250);
-  });
-  view.addEventListener("mouseout", e => { const t = e.target.closest(".tile"); if (t && !t.contains(e.relatedTarget)) stop(); });
+    }, delay);
+  };
   window.addEventListener("hashchange", stop);
+
+  if (matchMedia("(hover: hover) and (pointer: fine)").matches) {
+    view.addEventListener("mouseover", e => { const tile = e.target.closest(".tile[data-prev]"); if (tile) start(tile, 250); });
+    view.addEventListener("mouseout", e => { const t = e.target.closest(".tile"); if (t && !t.contains(e.relatedTarget)) stop(); });
+    return;
+  }
+
+  // Touch: pick the tile closest to the middle of the screen once scrolling settles
+  let queued = false;
+  const pick = () => {
+    queued = false;
+    const mid = innerHeight / 2;
+    let best = null, bestD = Infinity;
+    for (const t of view.querySelectorAll(".tile[data-prev]")) {
+      const r = t.getBoundingClientRect();
+      if (r.bottom < mid - r.height || r.top > mid + r.height) continue;
+      const d = Math.abs(r.top + r.height / 2 - mid);
+      if (d < bestD && d < r.height * 0.75) { best = t; bestD = d; }
+    }
+    if (!best) { stop(); return; }
+    if (!live || live.tile !== best) start(best, 350);
+  };
+  const queue = () => { if (!queued) { queued = true; requestAnimationFrame(pick); } };
+  window.addEventListener("scroll", queue, { passive: true });
+  window.addEventListener("resize", queue);
+  window.addEventListener("hashchange", () => setTimeout(queue, 300));
 })();
 
 document.getElementById("vf-skip").addEventListener("click", finish);
