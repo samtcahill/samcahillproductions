@@ -62,7 +62,7 @@ nav a:hover, nav a[aria-current="page"] { border-color: var(--fg); }
 .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding-bottom: 72px; }
 .tile { position: relative; display: block; min-width: 0; }
 .tile .frame { transition: opacity .3s; }
-.tile .name { position: absolute; inset: 0; display: grid; place-items: center; padding: 16px; text-align: center; font-weight: 600; font-size: clamp(14px, 1.4vw, 19px); letter-spacing: .14em; text-transform: uppercase; color: var(--frame-fg); text-wrap: balance; transition: opacity .3s; }
+.tile .name { position: absolute; inset: 0; display: grid; place-items: center; padding: 16px; text-align: center; font-weight: 600; font-size: clamp(14px, 1.4vw, 19px); letter-spacing: .02em; color: var(--frame-fg); text-wrap: balance; transition: opacity .3s; }
 .tile .count { position: absolute; right: 10px; top: 10px; font-family: var(--mono); font-size: 10px; color: var(--frame-fg); opacity: .7; }
 .tile:hover .frame, .tile:focus-visible .frame { opacity: .82; }
 .frame .thumb { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .4s, transform .6s ease; }
@@ -76,7 +76,7 @@ nav a:hover, nav a[aria-current="page"] { border-color: var(--fg); }
 
 /* project page */
 .project { padding-bottom: 72px; }
-.project h4 { font-size: 22px; font-weight: 600; letter-spacing: .02em; text-transform: uppercase; margin: 0 0 20px; }
+.project h4 { font-size: 22px; font-weight: 600; letter-spacing: 0; margin: 0 0 20px; }
 .project .frame { max-width: 1200px; }
 .project .credit { margin: -12px 0 20px; font-size: 13px; color: var(--muted); letter-spacing: .12em; text-transform: uppercase; }
 .notes { max-width: 1200px; margin-top: 32px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px 48px; align-items: start; }
@@ -155,7 +155,7 @@ footer .ig:hover svg { opacity: .55; }
 .pager a { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .pager a:last-child { text-align: right; }
 .pager small { font-size: 11px; color: var(--muted); letter-spacing: .12em; text-transform: uppercase; }
-.pager b { font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
+.pager b { font-weight: 600; letter-spacing: 0; }
 
 /* contact */
 .contact { padding-block: 24px 96px; display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
@@ -364,6 +364,47 @@ const W = [
   ["Sonic Burgers Commercial","short:mp2ExK2tjsk"],["Genre: Sadboy (Documentary)","hVKUBDKCuaU"],
   ["jxdn x For Those Who Sin","ig:https://www.instagram.com/reel/CZ2inCOpFfe/"]
 ].map(([t, v]) => ({ t, v, slug: t.toLowerCase().replace(/&/g,"and").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"") }));
+// Titles exactly as posted on YouTube, keyed by slug (slugs keep the short names so page links never change)
+const YT_TITLES = {
+  "lonely-road": "mgk & Jelly Roll - Lonely Road (Official Music Video)",
+  "fix-ur-face": "mgk - FIX UR FACE (feat. Fred Durst) (Official Music Video)",
+  "vampire-diaries": "mgk - vampire diaries",
+  "cliche": "mgk - cliché (Official Music Video)",
+  "miss-sunshine": "mgk - miss sunshine",
+  "crash-first": "honestav & mgk - Crash First (OFFICIAL MUSIC VIDEO)",
+  "iris": "mgk - iris feat. Julia Wolf (Cover)",
+  "jimmy-kimmel-2021": "mgk - drunk face/all I know/bloody valentine (Jimmy Kimmel Live 2021/Medley)",
+  "lost-boys": "mgk x Trippie Redd – lost boys (Official Music Video)",
+  "don-t-let-me-go": "mgk - dont let me go (Official Music Video)",
+  "girl-next-door": "mgk & Wiz Khalifa - girl next door (Official Music Video)",
+  "your-name-forever": "mgk - your name forever (Official Music Video)",
+  "el-pistolero": "mgk - El Pistolero (Official Music Video)",
+  "everything-tatted": "mgk, Wiz Khalifa - everything tatted (Official Video)",
+  "life-in-pink": "Machine Gun Kelly: Life In Pink | Official Trailer | Disneyplus Hotstar",
+  "mgk-mainstream-sellout-live-from-cleveland": "Machine Gun Kelly - Mainstream Sellout Live From Cleveland: The Pink Era (Official Trailer)",
+  "outlaw-overture": "mgk - outlaw overture (Official Music Video)",
+  "tell-me-what-s-up": "mgk - tell me whats up (Official Music Video)",
+  "starman": "mgk - starman (Official Music Video)",
+  "goddamn": "mgk - goddamn",
+  "passport": "mgk, Wiz Khalifa - passport (Official Video)",
+  "mph": "mgk & Wiz Khalifa - mph (Official Music Video)",
+  "jjk": "mgk, Yuki Chiba - JJK (Official Video)",
+  "pressure": "mgk - PRESSURE (Official Music Video)",
+  "the-sopranos": "Tee Grizzley - The Sopranos (feat. MGK) [Official Video]",
+  "mod-sun-stay-away": "Mod Sun - Stay Away ft. Machine Gun Kelly (OFFICIAL VIDEO)",
+  "taurus": "Machine Gun Kelly - Taurus (Feat. Naomi Wild) [From the Motion Picture Taurus]",
+  "9-lives": "mgk - 9 lives (Official Music Video)",
+  "daywalker": "Machine Gun Kelly ft. CORPSE - DAYWALKER! (Official Music Video)",
+  "bullets-with-names": "Bullets With Names ft. Young Thug, RJMrLA, Lil Duke (Official Music Video)",
+  "bloody-valentine-acoustic": "Machine Gun Kelly - Bloody Valentine Acoustic (Official Video)",
+  "mod-sun-hotel-lights": "MOD SUN - \"Hotel Lights\" (OFFICIAL VIDEO)",
+  "mod-sun-and-avril-lavigne-flames": "MOD SUN - \"Flames\" (Feat. Avril Lavigne) [Acoustic] - OFFICIAL VIDEO",
+  "jay-critch-takeout": "Jay Critch - Take Out (Official Music Video)",
+  "girlfriends-the-neighbourhood": "girlfriends - \"THERE GOES THE NEIGHBORHOOD\" (Official Music Video)",
+  "sonic-burgers-commercial": "mgk's Oscar-worthy performance for SONIC",
+  "genre-sadboy-documentary": "mgk x trippie redd - genre:sadboy (documentary)"
+  };
+W.forEach(w => w.name = YT_TITLES[w.slug] || w.t);
 // Sam's picks lead the grid, in this order
 const TOP = ["life-in-pink", "cliche", "lonely-road", "vampire-diaries", "fix-ur-face", "girl-next-door", "everything-tatted", "jjk", "mod-sun-hotel-lights"];
 W.sort((a, b) => (TOP.indexOf(a.slug) + 1 || 99) - (TOP.indexOf(b.slug) + 1 || 99));
@@ -395,7 +436,7 @@ function home() {
   <div class="grid">${W.map((w, i) => `
     <a class="tile" href="#${w.slug}">
       <span class="frame"><span class="shade" style="background:${shade(i)}"></span>${thumb(first(w))}</span>
-      <span class="name">${esc(w.t)}</span>
+      <span class="name">${esc(w.name)}</span>
       ${Array.isArray(w.v) ? `<span class="count">${w.v.length} videos</span>` : ""}
     </a>`).join("")}</div>`;
 }
@@ -477,9 +518,9 @@ function project(i) {
   const info = PRESS[w.slug];
   return `
   <article class="project">
-    <h4>${esc(w.t)}</h4>
+    <h4>${esc(w.name)}</h4>
     ${info && info.artist ? `<p class="credit">${esc(info.artist)}${info.credit ? ` <span>· ${esc(info.credit)}</span>` : ""}</p>` : ""}
-    <a class="frame" href="${url(vids[0])}" target="_blank" rel="noopener" aria-label="Play ${esc(w.t)}" ${ytId(vids[0]) ? `data-yt="${ytId(vids[0])}"` : ""}>
+    <a class="frame" href="${url(vids[0])}" target="_blank" rel="noopener" aria-label="Play ${esc(w.name)}" ${ytId(vids[0]) ? `data-yt="${ytId(vids[0])}"` : ""}>
       <span class="shade" style="background:${shade(i)}"></span>${thumb(vids[0])}${play}
     </a>
     ${vids.length > 1
@@ -487,8 +528,8 @@ function project(i) {
       : `<a class="watch" href="${url(vids[0])}" target="_blank" rel="noopener">Watch on ${where(vids[0])} ↗</a>`}
     ${info ? notes(info) : ""}
     <nav class="pager" aria-label="More projects">
-      <a href="#${p.slug}"><small>Previous</small><b>${esc(p.t)}</b></a>
-      <a href="#${n.slug}"><small>Next</small><b>${esc(n.t)}</b></a>
+      <a href="#${p.slug}"><small>Previous</small><b>${esc(p.name)}</b></a>
+      <a href="#${n.slug}"><small>Next</small><b>${esc(n.name)}</b></a>
     </nav>
   </article>`;
 }
