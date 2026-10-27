@@ -106,6 +106,13 @@ footer .ig + .ig { margin-left: -4px; }
 footer .ig { display: inline-flex; color: var(--fg); }
 footer .ig svg { width: 20px; height: 20px; fill: currentColor; transition: opacity .2s; }
 footer .ig:hover svg { opacity: .55; }
+.featured { margin: 8px 0 56px; }
+.featured .logos { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 28px 40px; padding: 28px 0 32px; border-bottom: 1px solid var(--line); }
+.featured .logos a { opacity: .8; transition: opacity .2s; }
+.featured .logos a:hover { opacity: 1; }
+.featured .lg { font-size: 22px; }
+.featured .lg-nme { font-size: 18px; } .featured .lg-wide { font-size: 13px; }
+@media (max-width: 760px) { .featured .logos { justify-content: flex-start; gap: 22px 28px; } .featured .lg { font-size: 18px; } }
 /* Press wall: outlet wordmarks + pull quotes scattered across the page in mixed sizes and faces */
 .wall { max-width: 1200px; margin-top: 56px; }
 .wall > .label { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); letter-spacing: .14em; text-transform: uppercase; padding-bottom: 10px; border-bottom: 1px solid var(--fg); }
@@ -372,8 +379,18 @@ const first = w => Array.isArray(w.v) ? w.v[0] : w.v;
 const esc = s => s.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const play = `<span class="play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3l16 9-16 9z"/></svg></span>`;
 
+// "As featured in": big outlets from PRESS, each linking to a project it covered
+const FEATURED = ["Rolling Stone", "Billboard", "NME", "Complex", "Kerrang!", "Consequence", "TMZ", "People", "USA TODAY", "E! News", "Newsweek", "SPIN", "Uproxx", "Hypebeast", "Loudwire", "NYLON"];
+function featured() {
+  const hits = FEATURED.map(o => {
+    const slug = Object.keys(PRESS).find(k => (PRESS[k].press || []).some(p => p.outlet.toLowerCase().startsWith(o.toLowerCase())));
+    return slug && `<a href="#${slug}" title="${esc(o)}">${logo(o)}</a>`;
+  }).filter(Boolean);
+  return `<section class="featured" aria-label="As featured in"><div class="section-label">As featured in</div><div class="logos">${hits.join("")}</div></section>`;
+}
+
 function home() {
-  return `
+  return `${featured()}
   <div class="section-label">Work <span>${W.length} projects</span></div>
   <div class="grid">${W.map((w, i) => `
     <a class="tile" href="#${w.slug}">
@@ -429,7 +446,7 @@ const BILLBOARD = `<svg viewBox="0 9.4 24 5.2" aria-hidden="true"><path d="M3.69
 // Outlet wordmarks, set in a face close to each masthead (no logo files to load)
 const LOGOS = [
   [/rolling stone/i, "lg-rs"], [/billboard/i, "lg-bb", BILLBOARD], [/^nme/i, "lg-nme", "NME"], [/complex/i, "lg-cx"],
-  [/kerrang/i, "lg-kr"], [/uproxx/i, "lg-ux"], [/revolt|alternative press|loudwire|consequence|xxl|tmz|people|hypebeast|stereogum/i, null],
+  [/kerrang/i, "lg-kr"], [/^e! news/i, "lg-anton", "E!"], [/^spin$/i, "lg-black"], [/^tmz/i, "lg-anton"], [/^people/i, "lg-black"], [/uproxx/i, "lg-ux"], [/revolt|alternative press|loudwire|consequence|xxl|tmz|people|hypebeast|stereogum/i, null],
 ];
 const FACES = ["lg-bebas", "lg-anton", "lg-serif", "lg-black", "lg-wide"];
 function logo(name) {
