@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://i.ytimg.com https://strapped.la; frame-src https://www.youtube-nocookie.com https://player.vimeo.com; media-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://i.ytimg.com https://strapped.la; frame-src https://www.youtube-nocookie.com https://player.vimeo.com; media-src 'self'; connect-src 'self' https://formsubmit.co; object-src 'none'; base-uri 'self'; form-action https://formsubmit.co; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="description" content="Sam Cahill: director, DoP, editor and photographer based in Los Angeles. Music videos, commercials and documentaries.">
 <meta property="og:title" content="Sam Cahill Productions">
@@ -119,6 +119,20 @@ footer .ig:hover svg { opacity: .55; }
 .tile .prev.on { opacity: 1; }
 .tile .name { z-index: 2; }
 .tile.previewing .name { place-items: end start; background: linear-gradient(0deg, rgba(0,0,0,.6), transparent 45%); text-align: left; font-size: 13px; }
+.contact dl { margin-top: 28px; }
+.book { display: grid; gap: 14px; align-content: start; }
+.book h5 { margin: 0 0 4px; font-size: 11px; color: var(--muted); letter-spacing: .14em; text-transform: uppercase; font-weight: 500; padding-bottom: 10px; border-bottom: 1px solid var(--fg); }
+.book label { display: grid; gap: 6px; font-size: 11px; color: var(--muted); letter-spacing: .12em; text-transform: uppercase; }
+.book input, .book select, .book textarea { font: inherit; font-size: 16px; letter-spacing: 0; text-transform: none; color: var(--fg); background: #fff; border: 0; border-bottom: 1px solid #cfcfcb; border-radius: 0; padding: 8px 0; width: 100%; }
+.book textarea { border: 1px solid #cfcfcb; padding: 10px; resize: vertical; }
+.book input:focus, .book select:focus, .book textarea:focus { outline: none; border-color: var(--fg); }
+.book .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.book .hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+.book button { justify-self: start; margin-top: 6px; font: inherit; font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: #fff; background: var(--fg); border: 1px solid var(--fg); padding: 14px 22px; cursor: pointer; }
+.book button:hover { background: #fff; color: var(--fg); }
+.book button:disabled { opacity: .5; cursor: wait; }
+.book .status { margin: 0; font-size: 14px; color: #3b3b39; min-height: 1.4em; }
+@media (max-width: 760px) { .contact { grid-template-columns: minmax(0, 1fr); } .book .row { grid-template-columns: minmax(0, 1fr); } }
 /* Press wall: outlet wordmarks + pull quotes scattered across the page in mixed sizes and faces */
 .wall { max-width: 1200px; margin-top: 56px; }
 .wall > .label { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); letter-spacing: .14em; text-transform: uppercase; padding-bottom: 10px; border-bottom: 1px solid var(--fg); }
@@ -540,6 +554,8 @@ function project(i) {
   </article>`;
 }
 
+// Booking form posts to FormSubmit, which emails each request to sam@bottomcard.com
+const FORM_ENDPOINT = "https://formsubmit.co/ajax/sam@bottomcard.com";
 function contact() {
   return `
   <section class="contact">
@@ -547,15 +563,52 @@ function contact() {
       <h4>Contact</h4>
       <p>Sam Cahill is a director, director of photography, editor and photographer based in Los Angeles.</p>
       <p>For music videos, commercials and documentary work, get in touch.</p>
+      <dl>
+        <dt>Email</dt><dd>sam@bottomcard.com</dd>
+        <dt>Instagram</dt><dd><a href="https://www.instagram.com/samcahill/" target="_blank" rel="noopener">@samcahill</a></dd>
+        <dt>X</dt><dd><a href="https://x.com/SamTCahill" target="_blank" rel="noopener">@SamTCahill</a></dd>
+        <dt>YouTube</dt><dd><a href="https://www.youtube.com/@Sam_Cahill" target="_blank" rel="noopener">@Sam_Cahill</a></dd>
+      </dl>
     </div>
-    <dl>
-      <dt>Email</dt><dd>sam@bottomcard.com</dd>
-      <dt>Instagram</dt><dd><a href="https://www.instagram.com/samcahill/" target="_blank" rel="noopener">@samcahill</a></dd>
-      <dt>X</dt><dd><a href="https://x.com/SamTCahill" target="_blank" rel="noopener">@SamTCahill</a></dd>
-      <dt>YouTube</dt><dd><a href="https://www.youtube.com/@Sam_Cahill" target="_blank" rel="noopener">@Sam_Cahill</a></dd>
-    </dl>
+    <form class="book" id="book" novalidate>
+      <h5>Book Sam</h5>
+      <label>Name<input name="name" autocomplete="name" required></label>
+      <label>Email<input name="email" type="email" autocomplete="email" required></label>
+      <div class="row">
+        <label>Project type<select name="project_type">
+          <option>Music video</option><option>Commercial</option><option>Documentary</option><option>Photography</option><option>Other</option>
+        </select></label>
+        <label>Date<input name="date" placeholder="When?"></label>
+      </div>
+      <label>Budget<input name="budget" placeholder="Optional"></label>
+      <label>Message<textarea name="message" rows="5" required placeholder="Tell me about the project"></textarea></label>
+      <input type="text" name="_honey" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <button type="submit">Send request</button>
+      <p class="status" role="status" aria-live="polite"></p>
+    </form>
   </section>`;
 }
+document.addEventListener("submit", async e => {
+  const f = e.target;
+  if (f.id !== "book") return;
+  e.preventDefault();
+  const st = f.querySelector(".status"), btn = f.querySelector("button");
+  if (!f.checkValidity()) { st.textContent = "Please add your name, a valid email and a message."; f.reportValidity(); return; }
+  const data = Object.fromEntries(new FormData(f));
+  if (data._honey) return;
+  data._subject = `Booking request: ${data.project_type} from ${data.name}`;
+  data._template = "table";
+  data._replyto = data.email;
+  btn.disabled = true; st.textContent = "Sending...";
+  try {
+    const r = await fetch(FORM_ENDPOINT, { method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify(data) });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok || j.success === "false" || j.success === false) throw new Error(j.message || r.status);
+    f.reset(); st.textContent = "Thanks, your request was sent. Sam will be in touch.";
+  } catch (err) {
+    st.textContent = "Something went wrong. Please email sam@bottomcard.com directly.";
+  } finally { btn.disabled = false; }
+});
 
 // From Sam's Bottom Card gear list (2026). "name|qty"; prices and contacts stay off the site.
 const GEAR = [
