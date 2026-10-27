@@ -365,7 +365,9 @@ const url = v => v.startsWith("ig:") ? v.slice(3) : v.startsWith("short:") ? "ht
 const where = v => v.startsWith("ig:") ? "Instagram" : "YouTube";
 const shade = i => { const h = (i * 47) % 360; return `radial-gradient(120% 90% at ${20 + (i*37)%60}% ${30 + (i*23)%40}%, hsla(${h},35%,38%,.55), transparent 60%), linear-gradient(${(i*29)%180}deg, #1b1c1e, #2a2b2e)`; };
 const ytId = v => v.startsWith("ig:") ? null : v.replace("short:", "");
-const thumb = v => { const id = ytId(v); return id ? `<img class="thumb" src="https://i.ytimg.com/vi/${id}/hqdefault.jpg" alt="" loading="lazy" onload="this.classList.add('ok');this.closest('.tile')?.classList.add('has-thumb')" onerror="this.remove()">` : ""; };
+// Custom stills for projects without a YouTube thumbnail, keyed by video value
+const STILLS = { "ig:https://www.instagram.com/reel/CZ2inCOpFfe/": "images/jxdn-thumb.jpg" };
+const thumb = v => { const id = ytId(v), src = STILLS[v] || (id && `https://i.ytimg.com/vi/${id}/hqdefault.jpg`); return src ? `<img class="thumb" src="${src}" alt="" loading="lazy" onload="this.classList.add('ok');this.closest('.tile')?.classList.add('has-thumb')" onerror="this.remove()">` : ""; };
 const first = w => Array.isArray(w.v) ? w.v[0] : w.v;
 const esc = s => s.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const play = `<span class="play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3l16 9-16 9z"/></svg></span>`;
