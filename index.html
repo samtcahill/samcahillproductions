@@ -5,15 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://i.ytimg.com https://strapped.la; frame-src https://www.youtube-nocookie.com https://player.vimeo.com; media-src 'self'; connect-src 'self' https://formsubmit.co; object-src 'none'; base-uri 'self'; form-action https://formsubmit.co; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta name="description" content="Sam Cahill: director, DoP, editor and photographer based in Los Angeles. Music videos, commercials and documentaries.">
-<meta property="og:title" content="Sam Cahill Productions">
+<meta name="description" content="Sam Cahill is a Los Angeles director, DoP, editor and photographer behind music videos for mgk, Wiz Khalifa, Jelly Roll and more, including the VMA-nominated FIX UR FACE.">
+<meta property="og:title" content="Sam Cahill | Director, DoP, Editor & Photographer">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Sam Cahill Productions">
 <meta property="og:description" content="Director · DoP · Editor · Photographer · Los Angeles">
 <meta property="og:image" content="https://i.ytimg.com/vi/xK-wXyzhtp0/maxresdefault.jpg">
 <meta property="og:url" content="https://samcahillproductions.com/">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23111'/%3E%3Ctext x='16' y='22' font-family='Arial' font-weight='700' font-size='16' fill='%23fff' text-anchor='middle'%3ESC.%3C/text%3E%3C/svg%3E">
 <style>html,body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
-<title>Sam Cahill Productions</title>
+<link rel="canonical" href="https://samcahillproductions.com/">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","name":"Sam Cahill","url":"https://samcahillproductions.com/","jobTitle":["Director","Director of Photography","Editor","Photographer"],"address":{"@type":"PostalAddress","addressLocality":"Los Angeles","addressRegion":"CA","addressCountry":"US"},"email":"mailto:sam@bottomcard.com","sameAs":["https://www.instagram.com/samcahill/","https://x.com/SamTCahill","https://www.youtube.com/@Sam_Cahill"]}</script>
+<title>Sam Cahill | Director, DoP, Editor & Photographer | Los Angeles</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo+Black&family=Archivo:wght@400;500;600;700&family=Bebas+Neue&family=IBM+Plex+Mono:wght@400&family=Instrument+Serif:ital@0;1&family=Playfair+Display:ital,wght@1,700;1,900&display=swap">
 <style>
@@ -445,7 +449,7 @@ const FEATURED = ["Rolling Stone", "Billboard", "NME", "Complex", "Kerrang!", "C
 function featured() {
   const hits = FEATURED.map(o => {
     const slug = Object.keys(PRESS).find(k => (PRESS[k].press || []).some(p => p.outlet.toLowerCase().startsWith(o.toLowerCase())));
-    return slug && `<a href="#${slug}" title="${esc(o)}">${logo(o)}</a>`;
+    return slug && `<a href="work/${slug}/" title="${esc(o)}">${logo(o)}</a>`;
   }).filter(Boolean);
   return `<section class="featured" aria-label="As featured in"><div class="section-label">As featured in</div><div class="logos">${hits.join("")}</div></section>`;
 }
@@ -454,7 +458,7 @@ function home() {
   return `${featured()}
   <div class="section-label">Work <span>${W.length} projects</span></div>
   <div class="grid">${W.map((w, i) => `
-    <a class="tile" href="#${w.slug}"${ytId(first(w)) ? ` data-prev="${ytId(first(w))}"` : ""}>
+    <a class="tile" href="work/${w.slug}/"${ytId(first(w)) ? ` data-prev="${ytId(first(w))}"` : ""}>
       <span class="frame"><span class="shade" style="background:${shade(i)}"></span>${thumb(first(w))}</span>
       <span class="name">${esc(w.name)}</span>
       ${Array.isArray(w.v) ? `<span class="count">${w.v.length} videos</span>` : ""}
@@ -548,8 +552,8 @@ function project(i) {
       : `<a class="watch" href="${url(vids[0])}" target="_blank" rel="noopener">Watch on ${where(vids[0])} ↗</a>`}
     ${info ? notes(info) : ""}
     <nav class="pager" aria-label="More projects">
-      <a href="#${p.slug}"><small>Previous</small><b>${esc(p.name)}</b></a>
-      <a href="#${n.slug}"><small>Next</small><b>${esc(n.name)}</b></a>
+      <a href="work/${p.slug}/"><small>Previous</small><b>${esc(p.name)}</b></a>
+      <a href="work/${n.slug}/"><small>Next</small><b>${esc(n.name)}</b></a>
     </nav>
   </article>`;
 }
@@ -703,11 +707,14 @@ function about() {
 }
 
 const view = document.getElementById("view");
+// Per-video pages live at /work/<slug>/ (built by build_pages.py) and open that project
+const PATH_SLUG = (location.pathname.match(/^\/work\/([^/]+)\/?$/) || [])[1];
 function route() {
-  const h = location.hash.slice(1);
+  const h = location.hash.slice(1) || PATH_SLUG || "";
   const i = W.findIndex(w => w.slug === h);
   const page = ["contact", "gear", "about"].includes(h) ? h : null;
   view.innerHTML = page === "contact" ? contact() : page === "gear" ? gear() : page === "about" ? about() : i >= 0 ? project(i) : home();
+  document.title = i >= 0 ? `${W[i].name} | Sam Cahill` : page ? `${page[0].toUpperCase() + page.slice(1)} | Sam Cahill` : "Sam Cahill | Director, DoP, Editor & Photographer | Los Angeles";
   document.getElementById("nav-about").toggleAttribute("aria-current", h === "about");
   document.body.classList.toggle("is-home", !page && i < 0);
   document.getElementById("nav-work").toggleAttribute("aria-current", !page);
@@ -757,6 +764,14 @@ function playIntro() {
     setTimeout(finish, 3050)
   ];
 }
+
+// Project links are real /work/<slug>/ URLs for search engines; on the site they switch views without a reload
+document.addEventListener("click", e => {
+  const a = e.target.closest('a[href^="work/"]');
+  if (!a || e.metaKey || e.ctrlKey || e.shiftKey || e.button) return;
+  e.preventDefault();
+  location.hash = a.getAttribute("href").split("/")[1];
+});
 
 // Hover previews: after a short hover, play the tile's video muted from 30s in
 (function hoverPreviews() {
