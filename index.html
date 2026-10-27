@@ -406,10 +406,20 @@ const W = [
   ["Mod Sun & Avril Lavigne Flames","SxRX_bU8jZk"],["Jay Critch Takeout","QhR9SXY6MAU"],["Girlfriends · The Neighbourhood","WoN_9SySJeo"],
   ["Sonic Burgers Commercial","short:mp2ExK2tjsk"],["Genre: Sadboy (Documentary)","hVKUBDKCuaU"],
   ["jxdn x For Those Who Sin","ig:https://www.instagram.com/reel/CZ2inCOpFfe/"],
-  ["Lost Americana Fragrance","_4ftWf4iHNk"]
+  ["Lost Americana Fragrance","_4ftWf4iHNk"],
+  ["Study Hall 005 Mike Giant", "STdzdJ09ps8"],
+  ["Study Hall 004 Haroshi", "hxa69m9W7u8"],
+  ["Study Hall 003 Big Skull & Mistint", "eAstVz3cOMY"],
+  ["Study Hall 002 Slawn", "89YnXM5amB0"],
+  ["Study Hall 001 Lugosis & Strato", "Trx4dycb4JU"]
 ].map(([t, v]) => ({ t, v, slug: t.toLowerCase().replace(/&/g,"and").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"") }));
 // Titles exactly as posted on YouTube, keyed by slug (slugs keep the short names so page links never change)
 const YT_TITLES = {
+  "study-hall-005-mike-giant": "STUDY HALL 005 - MIKE GIANT",
+  "study-hall-004-haroshi": "STUDY HALL 004 - HAROSHI",
+  "study-hall-003-big-skull-and-mistint": "STUDY HALL 003 - BIG SKULL & MISTINT",
+  "study-hall-002-slawn": "STUDY HALL 002 - SLAWN",
+  "study-hall-001-lugosis-and-strato": "STUDY HALL 001 - LUGOSIS & STRATO",
   "lost-americana-fragrance": "mgk drops his first genderless fragrance: \"lost americana\" | Dossier",
   "lonely-road": "mgk & Jelly Roll - Lonely Road (Official Music Video)",
   "fix-ur-face": "mgk - FIX UR FACE (feat. Fred Durst) (Official Music Video)",
@@ -452,6 +462,8 @@ const YT_TITLES = {
 W.forEach(w => w.name = YT_TITLES[w.slug] || w.t);
 // Sam's picks lead the grid, in this order
 const TOP = ["life-in-pink", "cliche", "lonely-road", "vampire-diaries", "fix-ur-face", "girl-next-door", "everything-tatted", "jjk", "mod-sun-hotel-lights", "lost-americana-fragrance"];
+// Categories that live only on the Work tab, not the homepage grid
+const WORK_ONLY = ["Study Hall"];
 W.sort((a, b) => (TOP.indexOf(a.slug) + 1 || 99) - (TOP.indexOf(b.slug) + 1 || 99));
 
 const url = v => v.startsWith("ig:") ? v.slice(3) : v.startsWith("short:") ? "https://youtube.com/shorts/" + v.slice(6) : "https://youtu.be/" + v;
@@ -482,8 +494,8 @@ const CATEGORY = {
   "jxdn-x-for-those-who-sin": "Fashion",
   "jimmy-kimmel-2021": "Live & Sessions", "mgk-the-cypher-and-cover-songs": "Live & Sessions", "iris": "Live & Sessions",
 };
-const CATS = ["Music Videos", "Documentary", "Commercial", "Fashion", "Live & Sessions"];
-W.forEach(w => w.cat = CATEGORY[w.slug] || "Music Videos");
+const CATS = ["Music Videos", "Documentary", "Commercial", "Fashion", "Live & Sessions", "Study Hall"];
+W.forEach(w => w.cat = CATEGORY[w.slug] || (w.slug.startsWith("study-hall-") ? "Study Hall" : "Music Videos"));
 const tile = (w, i) => `
     <a class="tile" href="work/${w.slug}/"${ytId(first(w)) ? ` data-prev="${ytId(first(w))}"` : ""}>
       <span class="frame"><span class="shade" style="background:${shade(i)}"></span>${thumb(first(w))}</span>
@@ -508,9 +520,10 @@ document.addEventListener("click", e => {
 });
 
 function home() {
+  const shown = W.filter(w => !WORK_ONLY.includes(w.cat)).length;
   return `${featured()}
-  <div class="section-label">Work <span>${W.length} projects</span></div>
-  <div class="grid">${W.map(tile).join("")}</div>`;
+  <div class="section-label">Work <span>${shown} projects</span></div>
+  <div class="grid">${W.map((w, i) => WORK_ONLY.includes(w.cat) ? "" : tile(w, i)).join("")}</div>`;
 }
 
 // Crew credits per project (each sourced from the video description, label release or press)
@@ -518,6 +531,11 @@ const CREW = {"lonely-road": [["Director", "Sam Cahill"]], "fix-ur-face": [["Dir
 
 // Blurbs, accolades and press links per project (keyed by slug); every item is sourced
 const PRESS = {
+  "study-hall-005-mike-giant": {"artist": "Mike Giant", "blurb": "Study Hall is a documentary series that follows an artist in their city, from first sketch to finished piece.", "shop": {"label": "More at studyhallarchive.com", "url": "https://studyhallarchive.com/"}},
+  "study-hall-004-haroshi": {"artist": "Haroshi", "blurb": "Study Hall is a documentary series that follows an artist in their city, from first sketch to finished piece.", "shop": {"label": "More at studyhallarchive.com", "url": "https://studyhallarchive.com/"}},
+  "study-hall-003-big-skull-and-mistint": {"artist": "Big Skull & Mistint", "blurb": "Study Hall is a documentary series that follows an artist in their city, from first sketch to finished piece.", "shop": {"label": "More at studyhallarchive.com", "url": "https://studyhallarchive.com/"}},
+  "study-hall-002-slawn": {"artist": "Slawn", "blurb": "Study Hall is a documentary series that follows an artist in their city, from first sketch to finished piece.", "shop": {"label": "More at studyhallarchive.com", "url": "https://studyhallarchive.com/"}},
+  "study-hall-001-lugosis-and-strato": {"artist": "Lugosis & Strato", "blurb": "Study Hall is a documentary series that follows an artist in their city, from first sketch to finished piece.", "shop": {"label": "More at studyhallarchive.com", "url": "https://studyhallarchive.com/"}},
   "lost-americana-fragrance": {"artist": "mgk x Dossier", "blurb": "Spot for lost americana, the unisex eau de parfum mgk co-created with Dossier: incense, almond and pink pepper up top, a heart of nutmeg, myrrh and cinnamon, and a base of vetiver, suede, vanilla and a hint of chocolate.", "shop": {"label": "Shop lost americana at Dossier", "url": "https://dossier.co/products/lost-americana"}},
   "lonely-road": {"artist": "mgk & Jelly Roll", "blurb": "Megan Fox and Bunnie XO co-star as mgk and Jelly Roll play down-on-their-luck car mechanics; mgk robs a bank to support his pregnant wife and ends up behind bars.", "credit": "Directed by Sam Cahill", "accolades": [{"text": "Song peaked at No. 33 on the Billboard Hot 100, No. 13 on Hot Country Songs and No. 7 on Hot Rock & Alternative Songs", "url": "https://en.wikipedia.org/wiki/Lonely_Road_(Machine_Gun_Kelly_and_Jelly_Roll_song)"}, {"text": "Certified Silver in the UK (BPI)", "url": "https://en.wikipedia.org/wiki/Lonely_Road_(Machine_Gun_Kelly_and_Jelly_Roll_song)"}], "press": [{"outlet": "Consequence", "headline": "Machine Gun Kelly and Jelly Roll Reimagine John Denver's \"Country Roads\" for New Single: Stream", "url": "https://consequence.net/2024/07/machine-gun-kelly-jelly-roll-lonely-stream", "quote": "arrived alongside a Sam Cahill-directed music video starring the two artists"}, {"outlet": "Rolling Stone Australia", "headline": "Machine Gun Kelly and Jelly Roll Drop Video for John Denver-Inspired 'Lonely Road'", "url": "https://au.rollingstone.com/music/music-news/machine-gun-kelly-jelly-roll-lonely-road-video-64910", "quote": "finds MGK and Jelly Roll playing down-on-their-financial-luck car mechanics."}, {"outlet": "TMZ", "headline": "Megan Fox Plays Pregnant Woman in New Machine Gun Kelly Music Video", "url": "https://www.tmz.com/2024/07/26/megan-fox-pregnant-mgk-machine-gun-kelly-jelly-roll-music-video/", "quote": "Megan's got a starring role as a pregnant woman who gives birth by the end of the song."}, {"outlet": "E! News", "headline": "Megan Fox Plays the Role of a Pregnant Woman in Machine Gun Kelly's New Music Video", "url": "https://www.eonline.com/news/1405443/megan-fox-plays-the-role-of-a-pregnant-woman-in-machine-gun-kellys-new-music-video", "quote": "MGK takes on the role of a mechanic who robs a bank"}, {"outlet": "TODAY", "headline": "All about Jelly Roll and Machine Gun Kelly's new music video with Bunnie XO and Megan Fox", "url": "https://www.today.com/parents/pregnancy/jelly-roll-machine-gun-kelly-video-megan-fox-bunnie-xo-rcna163826", "quote": "The video also spotlights Jelly Roll and wife Bunnie XO's struggle with infertility"}, {"outlet": "UPI", "headline": "Watch: Megan Fox joins Machine Gun Kelly, Jelly Roll in 'Lonely Road' video", "url": "https://www.upi.com/Entertainment_News/Music/2024/07/26/Machine-Gun-Kelly-Jelly-Roll-Lonely-Road-video-Megan-Fox/8651722006262/", "quote": "In the video, Kelly and Fox and Jelly Roll and Bunnie Xo play two couples fallen on hard times."}, {"outlet": "Holler", "headline": "Megan Fox and Bunnie XO Star in MGK and Jelly Roll's 'Lonely Road' Music Video", "url": "https://www.holler.country/news/breaking/megan-fox-and-bunnie-xo-star-in-mgk-and-jelly-rolls-lonely-road-music-video/", "quote": "It's a dramatic, rip-roaring video that enhances the stormy, brooding ambience of the song"}, {"outlet": "Melodic Magazine", "headline": "mgk and Jelly Roll join rock and country together in \"Lonely Road\"", "url": "https://www.melodicmag.com/news/mgk-and-jelly-roll-join-rock-and-country-together-in-lonely-road/", "quote": "The Sam Cahill-directed music video paints a vivid picture of the struggles faced by the protagonists"}, {"outlet": "Audacy", "headline": "MGK and Jelly Roll teamed up for a trip down a 'Lonely Road' for new collab", "url": "https://www.audacy.com/national/music/mgk-and-jelly-roll-team-up-for-lonely-road-collab", "quote": "the pair released a music video that features themselves alongside their well-known significant others."}]},
   "fix-ur-face": {"artist": "mgk feat. Fred Durst", "blurb": "Shot in black and white across eight cities on the Lost Americana tour, the video is all packed crowds and unfiltered fan moments. It earned a Best Alternative nomination at the 2026 MTV VMAs, and the song became mgk's first No. 1 on Billboard's Hot Hard Rock Songs chart.", "credit": "Directed by Sam Cahill", "accolades": [{"text": "Nominated, Best Alternative, 2026 MTV VMAs", "url": "https://www.thewrap.com/industry-news/awards/vmas-winners-list-2026/"}, {"text": "Hit No. 1 on Billboard's Hot Hard Rock Songs chart, climbing from No. 4 in its second week", "url": "https://bluntmag.com.au/news/mgk-fred-durst-fix-ur-face-number-one/"}, {"text": "Video made its broadcast premiere on MTV Live, MTVU and the Paramount Times Square billboards", "url": "https://blabbermouth.net/news/machine-gun-kelly-and-fred-durst-drop-new-single-and-video-for-fix-ur-face"}], "press": [{"outlet": "NME", "headline": "MGK and Fred Durst team up for massive nu-metal collab single 'FIX UR FACE'", "url": "https://www.nme.com/news/music/mgk-and-fred-durst-team-up-for-massive-nu-metal-collab-single-fix-ur-face-3941781", "quote": "It comes with a video directed by Sam Cahill"}, {"outlet": "Complex", "headline": "MGK and Fred Durst Drop Nu-Metal Collaboration \"Fix Ur Face\"", "url": "https://www.complex.com/music/a/markelibert/mgk-fred-durst-nu-metal-collab", "quote": "The visual focuses on crowd energy with fans pressed against barricades"}, {"outlet": "Kerrang!", "headline": "mgk and Fred Durst join forces on nu-metal banger, FIX UR FACE", "url": "https://www.kerrang.com/mgk-machine-gun-kelly-new-single-collab-fix-ur-face-featuring-fred-durst-official-music-video-limp-bizkit-nu-metal"}, {"outlet": "Consequence", "headline": "Machine Gun Kelly and Fred Durst Team Up on New Song \"FIX UR FACE\": Stream", "url": "https://concerts.consequence.net/articles/machine-gun-kelly-fred-durst-fix-ur-face", "quote": "An accompanying music video directed by Sam Cahill"}, {"outlet": "Revolver", "headline": "Hear FRED DURST join MACHINE GUN KELLY for raucous collab \"Fix Ur Face\"", "url": "https://www.revolvermag.com/music/hear-fred-durst-join-machine-gun-kelly-for-raucous-collab-fix-ur-face/", "quote": "MGK front-flipping into mosh pits and talking trash from the top of a basketball hoop"}, {"outlet": "Blabbermouth", "headline": "MACHINE GUN KELLY and FRED DURST Drop New Single and Video For 'Fix Ur Face'", "url": "https://blabbermouth.net/news/machine-gun-kelly-and-fred-durst-drop-new-single-and-video-for-fix-ur-face", "quote": "Shot in black and white across Berlin, Dublin, Düsseldorf, London, Prague, Cologne, Nashville, and Los Angeles"}, {"outlet": "uDiscover Music", "headline": "mgk And Fred Durst Share 'FIX UR FACE' Single", "url": "https://www.udiscovermusic.com/news/mgk-fred-durst-fix-ur-face/", "quote": "The official video, directed by Sam Cahill, was filmed in black and white"}, {"outlet": "Knotfest", "headline": "MGK Links with Fred Durst of Limp Bizkit for \"FIX UR FACE\"", "url": "https://knotfest.com/blogs/news/mgk-links-with-fred-durst-of-limp-bizkit-for-fix-ur-face", "quote": "The clip features MGK leading the charge with Durst seasoning the track on the chorus."}, {"outlet": "Blunt Magazine", "headline": "MGK And Fred Durst Just Scored A Hard Rock Chart Takeover With 'Fix Ur Face'", "url": "https://bluntmag.com.au/news/mgk-fred-durst-fix-ur-face-number-one/", "quote": "the track climbed from No. 4 to No. 1 in its second week on the chart"}, {"outlet": "antiMusic", "headline": "Watch mgk And Fred Durst's 'Fix Ur Face' Video", "url": "https://mail.antimusic.com/news/26/r0421watch_mgk_and_fred_dursts_fix_ur_face_video.shtml", "quote": "Packed crowds, constant motion, and no separation between artist and audience."}]},
