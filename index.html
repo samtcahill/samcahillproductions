@@ -110,7 +110,7 @@ footer .ig + .ig { margin-left: -4px; }
 footer .ig { display: inline-flex; color: var(--fg); }
 footer .ig svg { width: 20px; height: 20px; fill: currentColor; transition: opacity .2s; }
 footer .ig:hover svg { opacity: .55; }
-.featured { margin: 8px 0 56px; }
+.featured { margin: 56px 0 0; }
 .featured .logos { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 28px 40px; padding: 28px 0 32px; border-bottom: 1px solid var(--line); }
 .featured .logos a { opacity: .8; transition: opacity .2s; }
 .featured .logos a:hover { opacity: 1; }
@@ -137,11 +137,7 @@ footer .ig:hover svg { opacity: .55; }
 .book button:disabled { opacity: .5; cursor: wait; }
 .book .status { margin: 0; font-size: 14px; color: #3b3b39; min-height: 1.4em; }
 @media (max-width: 760px) { .contact { grid-template-columns: minmax(0, 1fr); } .book .row { grid-template-columns: minmax(0, 1fr); } }
-.filters { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: -6px 0 22px; }
-.filters button { font: inherit; font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); background: none; border: 0; border-bottom: 1px solid transparent; padding: 4px 0; cursor: pointer; }
-.filters button span { font-family: var(--mono); font-weight: 400; letter-spacing: 0; font-size: 11px; margin-left: 2px; }
-.filters button:hover { color: var(--fg); }
-.filters button[aria-selected="true"] { color: var(--fg); border-color: var(--fg); }
+.cat { margin-top: 56px; }
 /* Press wall: outlet wordmarks + pull quotes scattered across the page in mixed sizes and faces */
 .wall { max-width: 1200px; margin-top: 56px; }
 .wall > .label { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); letter-spacing: .14em; text-transform: uppercase; padding-bottom: 10px; border-bottom: 1px solid var(--fg); }
@@ -466,33 +462,30 @@ const CATEGORY = {
   "jxdn-x-for-those-who-sin": "Fashion",
   "jimmy-kimmel-2021": "Live & Sessions", "mgk-the-cypher-and-cover-songs": "Live & Sessions", "iris": "Live & Sessions",
 };
-const CATS = ["Music Videos", "Commercial", "Documentary", "Fashion", "Live & Sessions"];
+const CATS = ["Music Videos", "Documentary", "Commercial", "Fashion", "Live & Sessions"];
 W.forEach(w => w.cat = CATEGORY[w.slug] || "Music Videos");
-let activeCat = "All";
-try { activeCat = sessionStorage.getItem("cat") || "All"; } catch {}
-function filters() {
-  const count = c => W.filter(w => w.cat === c).length;
-  return `<div class="filters" role="tablist" aria-label="Filter work">${["All", ...CATS].map(c => `<button type="button" role="tab" data-cat="${esc(c)}" aria-selected="${c === activeCat}">${esc(c)} <span>${c === "All" ? W.length : count(c)}</span></button>`).join("")}</div>`;
-}
-document.addEventListener("click", e => {
-  const b = e.target.closest(".filters button");
-  if (!b) return;
-  activeCat = b.dataset.cat;
-  try { sessionStorage.setItem("cat", activeCat); } catch {}
-  document.querySelectorAll(".filters button").forEach(x => x.setAttribute("aria-selected", x === b));
-  document.querySelectorAll(".grid .tile").forEach(t => t.hidden = activeCat !== "All" && t.dataset.cat !== activeCat);
-});
-
-function home() {
-  return `${featured()}
-  <div class="section-label">Work <span>${W.length} projects</span></div>
-  ${filters()}
-  <div class="grid">${W.map((w, i) => `
-    <a class="tile" href="work/${w.slug}/" data-cat="${esc(w.cat)}"${activeCat !== "All" && w.cat !== activeCat ? " hidden" : ""}${ytId(first(w)) ? ` data-prev="${ytId(first(w))}"` : ""}>
+const tile = (w, i) => `
+    <a class="tile" href="work/${w.slug}/"${ytId(first(w)) ? ` data-prev="${ytId(first(w))}"` : ""}>
       <span class="frame"><span class="shade" style="background:${shade(i)}"></span>${thumb(first(w))}</span>
       <span class="name">${esc(w.name)}</span>
       ${Array.isArray(w.v) ? `<span class="count">${w.v.length} videos</span>` : ""}
-    </a>`).join("")}</div>`;
+    </a>`;
+// Homepage: the first 6 projects as Featured, then every other project grouped by category
+const FEATURED_COUNT = 6;
+function home() {
+  const top = W.slice(0, FEATURED_COUNT), rest = W.slice(FEATURED_COUNT);
+  const idx = w => W.indexOf(w);
+  return `
+  <div class="section-label">Selected Work <span>${W.length} projects</span></div>
+  <div class="grid">${top.map(w => tile(w, idx(w))).join("")}</div>
+  ${featured()}
+  ${CATS.map(c => {
+    const list = rest.filter(w => w.cat === c);
+    return list.length ? `<section class="cat" id="cat-${c.toLowerCase().replace(/[^a-z]+/g, "-")}">
+    <div class="section-label">${esc(c)} <span>${list.length}</span></div>
+    <div class="grid">${list.map(w => tile(w, idx(w))).join("")}</div>
+  </section>` : "";
+  }).join("")}`;
 }
 
 // Blurbs, accolades and press links per project (keyed by slug); every item is sourced
