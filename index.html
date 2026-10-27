@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://i.ytimg.com; frame-src https://www.youtube-nocookie.com https://player.vimeo.com; media-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://i.ytimg.com; frame-src https://www.youtube-nocookie.com https://player.vimeo.com; media-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="description" content="Sam Cahill: director, DoP, editor and photographer based in Los Angeles. Music videos, commercials and documentaries.">
 <meta property="og:title" content="Sam Cahill Productions">
@@ -101,6 +101,8 @@ nav a:hover, nav a[aria-current="page"] { border-color: var(--fg); }
 
 footer .wrap { padding-block: 28px; font-size: 12px; color: var(--muted); border-top: 1px solid var(--line); display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
 
+@font-face { font-family: "VCR OSD Mono"; src: url("fonts/vcr-osd-mono.ttf") format("truetype"); font-display: swap; }
+:root { --vcr: "VCR OSD Mono", var(--mono); }
 /* reel as the page background on the homepage */
 .top { position: relative; }
 .is-home header { position: absolute; inset: 0 0 auto; z-index: 3; color: #fff; }
@@ -122,7 +124,7 @@ footer .wrap { padding-block: 28px; font-size: 12px; color: var(--muted); border
 .bg-reel::before { content: ""; position: absolute; inset: 0; z-index: 1; background: repeating-linear-gradient(0deg, rgba(255,255,255,.03) 0 1px, transparent 1px 3px); }
 .bg-reel::after { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(180deg, rgba(0,0,0,.45), transparent 22%, transparent 55%, rgba(0,0,0,.6)); }
 .bg-reel .over { position: absolute; z-index: 2; left: 0; right: 0; bottom: 0; display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; padding-block: 0 36px; }
-.bg-reel h1 { margin: 0; font-weight: 700; font-size: clamp(44px, 8vw, 120px); line-height: .9; letter-spacing: -0.02em; }
+.bg-reel h1 { margin: 0; font-family: var(--vcr); font-weight: 400; font-size: clamp(40px, 7.5vw, 112px); line-height: 1; letter-spacing: 0.02em; text-transform: uppercase; text-shadow: 0 0 18px rgba(255,255,255,.18); }
 .bg-reel .roles { margin-top: 12px; font-size: 13px; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; opacity: .9; }
 .bg-reel .full { display: inline-flex; align-items: center; gap: 10px; border: 1px solid rgba(255,255,255,.7); padding: 12px 18px; font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; }
 .bg-reel .full:hover { background: #fff; color: #111; }
