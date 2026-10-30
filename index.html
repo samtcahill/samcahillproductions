@@ -733,13 +733,15 @@ document.addEventListener("submit", async e => {
   if (d._honey) return;
   d.subject = `Booking request: ${d.project_type} from ${d.name}`;
   btn.disabled = true; st.textContent = "Sending...";
+  let why = "";
   for (const send of SENDERS) {
     try { await send(d); f.reset(); st.textContent = "Thanks, your request was sent. Sam will be in touch."; btn.disabled = false; return; }
-    catch (err) { console.warn("Booking form:", err.message); }
+    catch (err) { console.warn("Booking form:", err.message); if (err.message !== "no key") why = err.message; }
   }
   const lines = [`Name: ${d.name}`, `Email: ${d.email}`, `Project type: ${d.project_type}`, `Date: ${d.date || "-"}`, `Budget: ${d.budget || "-"}`, "", d.message];
   const mail = `mailto:info@bottomcard.com?subject=${encodeURIComponent(d.subject)}&body=${encodeURIComponent(lines.join("\n"))}`;
-  st.innerHTML = `The form couldn't send just now. <a href="${esc(mail)}">Send it as an email instead</a> (your message is already filled in).`;
+  st.innerHTML = (/activat/i.test(why) ? "This form is waiting for its one-time activation, so it can't send yet. " : "The form couldn't send just now. ")
+    + `<a href="${esc(mail)}">Send it as an email instead</a> (your message is already filled in).`;
   btn.disabled = false;
 });
 
