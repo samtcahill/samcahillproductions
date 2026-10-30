@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <base href="/">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://i.ytimg.com https://img1.hulu.com https://strapped.la; frame-src https://www.youtube-nocookie.com https://player.vimeo.com; media-src 'self'; connect-src 'self' https://formsubmit.co; object-src 'none'; base-uri 'self'; form-action https://formsubmit.co; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://i.ytimg.com https://img1.hulu.com https://strapped.la; frame-src https://www.youtube-nocookie.com https://player.vimeo.com; media-src 'self'; connect-src 'self' https://api.web3forms.com https://formsubmit.co; object-src 'none'; base-uri 'self'; form-action https://formsubmit.co; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="description" content="mgk and Julia Wolf turn the Goo Goo Dolls&#x27; 1998 classic &#x27;Iris&#x27; into a heavier-guitared duet, paying homage to the original with live instrumentation.">
 <meta property="og:title" content="mgk - iris feat. Julia Wolf (Cover) | Sam Cahill">
@@ -707,40 +707,40 @@ function contact() {
     </form>
   </section>`;
 }
+// Delivery services, tried in order; the visitor gets a prefilled email if all of them fail
+const WEB3FORMS_KEY = ""; // public access key from web3forms.com, tied to info@bottomcard.com
+const post = async (url, fields) => {
+  // Plain form-data body keeps this a "simple" request, so the browser skips the CORS preflight
+  const body = new FormData();
+  for (const [k, v] of Object.entries(fields)) body.append(k, v);
+  const r = await fetch(url, { method: "POST", headers: { Accept: "application/json" }, body });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok || j.success === "false" || j.success === false) throw new Error(j.message || `HTTP ${r.status}`);
+};
+const SENDERS = [
+  d => WEB3FORMS_KEY ? post("https://api.web3forms.com/submit", { access_key: WEB3FORMS_KEY, subject: d.subject, from_name: d.name, replyto: d.email,
+    name: d.name, email: d.email, project_type: d.project_type, date: d.date, budget: d.budget, message: d.message }) : Promise.reject(new Error("no key")),
+  d => post(FORM_ENDPOINT, { name: d.name, email: d.email, project_type: d.project_type, date: d.date, budget: d.budget, message: d.message,
+    _subject: d.subject, _template: "table", _replyto: d.email }),
+];
 document.addEventListener("submit", async e => {
   const f = e.target;
   if (f.id !== "book") return;
   e.preventDefault();
   const st = f.querySelector(".status"), btn = f.querySelector("button");
   if (!f.checkValidity()) { st.textContent = "Please add your name, a valid email and a message."; f.reportValidity(); return; }
-  const data = Object.fromEntries(new FormData(f));
-  if (data._honey) return;
-  data._subject = `Booking request: ${data.project_type} from ${data.name}`;
-  data._template = "table";
-  data._replyto = data.email;
+  const d = Object.fromEntries(new FormData(f));
+  if (d._honey) return;
+  d.subject = `Booking request: ${d.project_type} from ${d.name}`;
   btn.disabled = true; st.textContent = "Sending...";
-  try {
-    // Plain form-data body keeps this a "simple" request, so the browser skips the CORS preflight
-    const body = new FormData();
-    for (const [k, v] of Object.entries(data)) body.append(k, v);
-    let r;
-    try { r = await fetch(FORM_ENDPOINT, { method: "POST", headers: { Accept: "application/json" }, body }); }
-    catch (netErr) {
-      // The form service is unreachable: offer the same message as a ready-to-send email instead
-      const lines = [`Name: ${data.name}`, `Email: ${data.email}`, `Project type: ${data.project_type}`, `Date: ${data.date || "-"}`, `Budget: ${data.budget || "-"}`, "", data.message];
-      const mail = `mailto:info@bottomcard.com?subject=${encodeURIComponent(data._subject)}&body=${encodeURIComponent(lines.join("\n"))}`;
-      st.innerHTML = `The form couldn't connect just now. <a href="${esc(mail)}">Send it as an email instead</a> (your message is already filled in).`;
-      return;
-    }
-    const j = await r.json().catch(() => ({}));
-    if (!r.ok || j.success === "false" || j.success === false) throw new Error(j.message || `HTTP ${r.status}`);
-    f.reset(); st.textContent = "Thanks, your request was sent. Sam will be in touch.";
-  } catch (err) {
-    // FormSubmit explains problems (e.g. the one-time activation) in its message, so show it
-    st.textContent = /activat/i.test(err.message) ? "This form is being activated. Please try again shortly, or email info@bottomcard.com directly."
-      : `Something went wrong (${err.message}). Please email info@bottomcard.com directly.`;
-    console.warn("Booking form:", err.message);
-  } finally { btn.disabled = false; }
+  for (const send of SENDERS) {
+    try { await send(d); f.reset(); st.textContent = "Thanks, your request was sent. Sam will be in touch."; btn.disabled = false; return; }
+    catch (err) { console.warn("Booking form:", err.message); }
+  }
+  const lines = [`Name: ${d.name}`, `Email: ${d.email}`, `Project type: ${d.project_type}`, `Date: ${d.date || "-"}`, `Budget: ${d.budget || "-"}`, "", d.message];
+  const mail = `mailto:info@bottomcard.com?subject=${encodeURIComponent(d.subject)}&body=${encodeURIComponent(lines.join("\n"))}`;
+  st.innerHTML = `The form couldn't send just now. <a href="${esc(mail)}">Send it as an email instead</a> (your message is already filled in).`;
+  btn.disabled = false;
 });
 
 // From Sam's Bottom Card gear list (2026). "name|qty"; prices and contacts stay off the site.
