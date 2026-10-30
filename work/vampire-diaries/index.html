@@ -720,7 +720,21 @@ document.addEventListener("submit", async e => {
   data._replyto = data.email;
   btn.disabled = true; st.textContent = "Sending...";
   try {
-    const r = await fetch(FORM_ENDPOINT, { method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify(data) });
+    // Plain form-data body keeps this a "simple" request, so the browser skips the CORS preflight
+    const body = new FormData();
+    for (const [k, v] of Object.entries(data)) body.append(k, v);
+    let r;
+    try { r = await fetch(FORM_ENDPOINT, { method: "POST", headers: { Accept: "application/json" }, body }); }
+    catch (netErr) {
+      // The request never got through (blocker, network, CORS): fall back to a normal form post
+      f.action = FORM_ENDPOINT.replace("/ajax/", "/"); f.method = "POST";
+      for (const k of ["_subject", "_template", "_next"]) {
+        const i = document.createElement("input"); i.type = "hidden"; i.name = k;
+        i.value = k === "_next" ? location.origin + "/#contact" : data[k]; f.append(i);
+      }
+      HTMLFormElement.prototype.submit.call(f);
+      return;
+    }
     const j = await r.json().catch(() => ({}));
     if (!r.ok || j.success === "false" || j.success === false) throw new Error(j.message || `HTTP ${r.status}`);
     f.reset(); st.textContent = "Thanks, your request was sent. Sam will be in touch.";
