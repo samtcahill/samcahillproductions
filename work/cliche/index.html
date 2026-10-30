@@ -726,13 +726,10 @@ document.addEventListener("submit", async e => {
     let r;
     try { r = await fetch(FORM_ENDPOINT, { method: "POST", headers: { Accept: "application/json" }, body }); }
     catch (netErr) {
-      // The request never got through (blocker, network, CORS): fall back to a normal form post
-      f.action = FORM_ENDPOINT.replace("/ajax/", "/"); f.method = "POST";
-      for (const k of ["_subject", "_template", "_next"]) {
-        const i = document.createElement("input"); i.type = "hidden"; i.name = k;
-        i.value = k === "_next" ? location.origin + "/#contact" : data[k]; f.append(i);
-      }
-      HTMLFormElement.prototype.submit.call(f);
+      // The form service is unreachable: offer the same message as a ready-to-send email instead
+      const lines = [`Name: ${data.name}`, `Email: ${data.email}`, `Project type: ${data.project_type}`, `Date: ${data.date || "-"}`, `Budget: ${data.budget || "-"}`, "", data.message];
+      const mail = `mailto:info@bottomcard.com?subject=${encodeURIComponent(data._subject)}&body=${encodeURIComponent(lines.join("\n"))}`;
+      st.innerHTML = `The form couldn't connect just now. <a href="${esc(mail)}">Send it as an email instead</a> (your message is already filled in).`;
       return;
     }
     const j = await r.json().catch(() => ({}));
