@@ -101,6 +101,9 @@ nav a:hover, nav a[aria-current="page"] { border-color: var(--fg); }
 .notes .press li a:hover span { text-decoration: underline; }
 .notes .press b { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; }
 .notes .press span { font-size: 15px; }
+.facts .rep { display: inline-flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--line); }
+.facts .rep img { height: 26px; width: auto; }
+.facts .rep:hover { border-color: var(--fg); }
 .strapped { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 24px; align-items: center; margin-top: 40px; padding: 20px; border: 1px solid var(--fg); }
 .strapped .pic { aspect-ratio: 1; background: #f3f3f1; overflow: hidden; display: grid; place-items: center; }
 .strapped img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s ease; }
@@ -826,6 +829,7 @@ function about() {
         <p style="font-size:17px;line-height:1.65;color:#2a2a28">As a young leader, Sam has built a personal audience of over one hundred thousand followers, has built a network audience of 200M+ followers, and accumulated 1B+ views/streams. Sam has had various publications on platforms like Billboard, MTV, Spotify, Global Citizen, Rolling Stone and many more. Sam continues to push the boundaries of entrepreneurship and contemporary business.</p>
       </div>
       <dl class="facts" style="margin-top:32px">
+        <dt>Represented by</dt><dd><a class="rep" href="https://www.flr13.com/#home" target="_blank" rel="noopener"><img src="images/floor13-black.png" alt="" width="227" height="256">Floor 13 ↗</a></dd>
         <dt>Worked with</dt><dd>Will Smith · Adidas · Machine Gun Kelly</dd>
         <dt>Featured in</dt><dd>Billboard · MTV · Spotify · Global Citizen · Rolling Stone</dd>
         <dt>Studied</dt><dd>Film Studies, University of Colorado</dd>
